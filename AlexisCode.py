@@ -64,7 +64,7 @@ async def on_message(message):
     
     if messageContent.startswith(",test"):
         # for item in:
-        await message.channel.send(guild_var.members)
+        await message.channel.send(getattr(guild_var, 'members'))
 
 
 
