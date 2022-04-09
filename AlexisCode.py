@@ -84,20 +84,18 @@ async def on_message(message):
     if messageContent.startswith(",balance"):
         if serverName == author.guild.name:
             team1 = []
-            team2 = []
             half = len(lockedin)/2
-            await message.channel.send("Team 1:")
             for i in range(int(half+1)):
                 team1.append(lockedin[random.randint(0,len(lockedin)-1)])
                 del lockedin[random.randint(0,len(lockedin)-1)]
             
+            await message.channel.send("Team 1:")
             for items in team1:
                 await message.channel.send(items)
-            
 
-            # await message.channel.send("Locked in players")
-            # for items in lockedin:
-            #     await message.channel.send(items)
+            await message.channel.send("Team 2:")
+            for items in lockedin:
+                await message.channel.send(items)
         else:
             await message.channel.send("No players are ready, sadge :( ")
 
