@@ -2,6 +2,7 @@
 https://betterprogramming.pub/coding-a-discord-bot-with-python-64da9d6cade7
 '''
 
+from lib2to3.pgen2.token import EQUAL
 import os
 import discord
 from dotenv import load_dotenv
@@ -25,6 +26,10 @@ guild_var = discord.Guild
 # My Variables
 Maps=["Ascent", "Bind", "Haven", "Split", "Icebox", "Breeze", "Fracture"]
 valorantWar = ["5v5"]
+
+lockedin = []
+serverName="none"
+
 
 # EVENT LISTENER FOR WHEN THE BOT IS READY/ONLINE
 @bot.event
@@ -62,9 +67,40 @@ async def on_message(message):
         async for item in bot.fetch_guilds():
             await message.channel.send(item.name)
     
-    if messageContent.startswith(",test"):
-        # for item in:
-        await message.channel.send(getattr(guild_var, 'members'))
+    if messageContent.startswith(",g"):
+        global serverName
+        serverName = str(author.guild.name)
+        await message.channel.send("<@"+str(author.id)+">" + " is ready.")
+        lockedin.append("<@"+str(author.id)+">")
+    
+    if messageContent.startswith(",whog"):
+        if serverName == author.guild.name:
+            await message.channel.send("Locked in players")
+            for items in lockedin:
+                await message.channel.send(items)
+        else:
+            await message.channel.send("No players are ready, sadge :( ")
+    
+    if messageContent.startswith(",balance"):
+        if serverName == author.guild.name:
+            team1 = []
+            team2 = []
+            half = len(lockedin)/2
+            await message.channel.send("Team 1:")
+            for i in range(int(half+1)):
+                team1.append(lockedin[random.randint(0,len(lockedin)-1)])
+                del lockedin[random.randint(0,len(lockedin)-1)]
+            
+            for items in team1:
+                await message.channel.send(items)
+            
+
+            # await message.channel.send("Locked in players")
+            # for items in lockedin:
+            #     await message.channel.send(items)
+        else:
+            await message.channel.send("No players are ready, sadge :( ")
+
 
 
 
