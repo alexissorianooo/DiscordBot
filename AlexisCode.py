@@ -29,6 +29,7 @@ valorantWar = ["5v5"]
 
 lockedin = []
 serverName="none"
+team1 = []
 
 
 # EVENT LISTENER FOR WHEN THE BOT IS READY/ONLINE
@@ -70,24 +71,49 @@ async def on_message(message):
     if messageContent.startswith(",g"):
         global serverName
         serverName = str(author.guild.name)
-        await message.channel.send("<@"+str(author.id)+">" + " is ready.")
-        lockedin.append("<@"+str(author.id)+">")
+        
+        if "<@"+str(author.id)+">" in lockedin:
+            await message.channel.send("<@"+str(author.id)+">" + " is already locked in")
+        else:
+            await message.channel.send("<@"+str(author.id)+">" + " is ready.")
+            lockedin.append("<@"+str(author.id)+">")
     
     if messageContent.startswith(",whog"):
         if serverName == author.guild.name:
-            await message.channel.send("Locked in players")
+            await message.channel.send("Locked in players: " + str(len(lockedin)))
             for items in lockedin:
                 await message.channel.send(items)
         else:
             await message.channel.send("No players are ready, sadge :( ")
     
-    if messageContent.startswith(",balance"):
+    if messageContent.startswith(",team"):
         if serverName == author.guild.name:
-            team1 = []
-            half = len(lockedin)/2
-            for i in range(int(half+1)):
-                team1.append(lockedin[random.randint(0,len(lockedin)-1)])
-                del lockedin[random.randint(0,len(lockedin)-1)]
+            global team1
+            even = len(lockedin)/2
+            
+            balanceTeam(even)
+            
+            await message.channel.send("Team 1:")
+            for items in team1:
+                await message.channel.send(items)
+
+            await message.channel.send("Team 2:")
+            for items in lockedin:
+                await message.channel.send(items)
+        else:
+            await message.channel.send("No players are ready, sadge :( ")
+
+    if messageContent.startswith(",reteam"):
+        if serverName == author.guild.name:
+            
+
+            for item in team1:
+                lockedin.append(item)
+                team1.remove(item)
+            
+            even = len(lockedin)/2
+            
+            balanceTeam(even)
             
             await message.channel.send("Team 1:")
             for items in team1:
@@ -106,6 +132,20 @@ async def on_message(message):
 def generatemapval():
   map = random.choice(Maps)
   return map
+
+def balanceTeam(even):
+    if even == 0:
+        while len(team1) != len(lockedin):
+            player = random.choice(lockedin)
+            team1.append(player)
+            lockedin.remove(player)
+    else:
+        
+        while len(team1) < len(lockedin):
+            player = random.choice(lockedin)
+            team1.append(player)
+            lockedin.remove(player)
+
 
 # RUNS THE BOT VIA TOKEN
 bot.run(DISCORD_TOKEN)
